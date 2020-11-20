@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:todo_app/database.dart';
 import 'package:todo_app/screen/taskpage.dart';
 import 'package:todo_app/widgets.dart';
-import 'package:flutter/widgets.dart';
-
 
 class Homepage extends StatefulWidget {
   @override
@@ -10,6 +10,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _State extends State<Homepage> {
+  DatabaseHelper _dbHelper = DatabaseHelper();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +19,9 @@ class _State extends State<Homepage> {
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 24,),
+          padding: EdgeInsets.symmetric(
+            horizontal: 24,
+          ),
           color: Color(0xFFF6F6F6),
           child: Stack(
             children: [
@@ -25,23 +29,29 @@ class _State extends State<Homepage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(bottom: 32,top: 32),
+                    margin: EdgeInsets.only(bottom: 32, top: 32),
                     child: Image(
                       image: AssetImage('assets/images/logo.png'),
                     ),
                   ),
                   Expanded(
-                    child: ScrollConfiguration(
-                      behavior: NoGlow(),
-                      child: ListView(
-                        children: [
-                          TaskCard(),
-                          TaskCard(),
-                          TaskCard(),
-                          TaskCard(),
-                          TaskCard(),
-                        ],
-                      ),
+                    child: FutureBuilder(
+                      initialData: [],
+                      future: _dbHelper.getTask(),
+                      builder: (context, snapshot) {
+                        return ScrollConfiguration(
+                          behavior: NoGlow(),
+                          child: ListView.builder(
+                            itemBuilder: (context, index) {
+                              return TaskCard(
+                                title: snapshot.data[index].title,
+                                description: snapshot.data[index].description,
+                              );
+                            },
+                            itemCount: snapshot.data.length,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -50,8 +60,13 @@ class _State extends State<Homepage> {
                 bottom: 24,
                 right: 0,
                 child: GestureDetector(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => TaskPage(),),);
+                  onTap: () {
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => TaskPage()),
+
+                    ).then((value) {
+                      setState(() {});
+                    });
                   },
                   child: Container(
                     height: 50,
