@@ -43,9 +43,19 @@ class _State extends State<Homepage> {
                           behavior: NoGlow(),
                           child: ListView.builder(
                             itemBuilder: (context, index) {
-                              return TaskCard(
-                                title: snapshot.data[index].title,
-                                description: snapshot.data[index].description,
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => TaskPage(
+                                                task: snapshot.data[index],
+                                              )));
+                                },
+                                child: TaskCard(
+                                  title: snapshot.data[index].title,
+                                  description: snapshot.data[index].description,
+                                ),
                               );
                             },
                             itemCount: snapshot.data.length,
@@ -62,7 +72,8 @@ class _State extends State<Homepage> {
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TaskPage()),
+                      MaterialPageRoute(builder: (context) =>
+                          TaskPage(task: null)),
 
                     ).then((value) {
                       setState(() {});

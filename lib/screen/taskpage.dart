@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/database.dart';
 import 'package:todo_app/models/task.dart';
-import 'package:todo_app/widgets.dart';
+import 'package:todo_app/models/todo.dart';
 
 class TaskPage extends StatefulWidget {
+  final Task task;
+
+  TaskPage({@required this.task});
+
   @override
   _TaskPageState createState() => _TaskPageState();
 }
 
 class _TaskPageState extends State<TaskPage> {
+
+  String _taskTitle = "";
+
+  @override
+  void initState() {
+    if (widget.task != null) {
+      _taskTitle = widget.task.title;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,13 +53,19 @@ class _TaskPageState extends State<TaskPage> {
                           child: TextField(
                             onSubmitted: (value) async {
                               if (value != '') {
-                                DatabaseHelper _dbHelper = DatabaseHelper();
+                                if (widget.task == null) {
+                                  DatabaseHelper _dbHelper = DatabaseHelper();
 
-                                Task _newTask = Task(title: value);
+                                  Task _newTask = Task(title: value,);
 
-                                await _dbHelper.inserTask(_newTask);
+                                  await _dbHelper.insertTask(_newTask);
+                                } else {
+
+                                }
                               }
                             },
+                            controller: TextEditingController()
+                              ..text = _taskTitle,
                             decoration: InputDecoration(
                               hintText: "Enter Task Title",
                               border: InputBorder.none,
@@ -70,11 +90,55 @@ class _TaskPageState extends State<TaskPage> {
                       ),
                     ),
                   ),
-                  Todo(
-                    isDone: false,
-                  ),
-                  Todo(
-                    isDone: true,
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 20,
+                              margin: EdgeInsets.only(right: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(color: Color(0xFF868290),
+                                    width: 1.5),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Image(
+                                image: AssetImage(
+                                    'assets/images/check_icon.png'
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: TextField(
+                                onSubmitted: (value) async {
+                                  if (value != '') {
+                                    if (widget.task != null) {
+                                      DatabaseHelper _dbHelper = DatabaseHelper();
+                                      ToDo _newTodo = ToDo(
+                                          title: value,
+                                          isDone: 0,
+                                          taskId: widget.task.id
+                                      );
+                                      await _dbHelper.insertTodo(
+                                          _newTodo
+                                      );
+                                    }
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  hintText: "Enter TODO item......",
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                 ],
               ),
