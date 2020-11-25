@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:todo_app/database.dart';
 import 'package:todo_app/screen/taskpage.dart';
 import 'package:todo_app/widgets.dart';
 
 class Homepage extends StatefulWidget {
   @override
-  _State createState() => _State();
+  _HomepageState createState() => _HomepageState();
 }
 
-class _State extends State<Homepage> {
+class _HomepageState extends State<Homepage> {
   DatabaseHelper _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF6F6F6),
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(
-            horizontal: 24,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 24.0),
           color: Color(0xFFF6F6F6),
           child: Stack(
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+                children: [
                   Container(
-                    margin: EdgeInsets.only(bottom: 32, top: 32),
+                    margin: EdgeInsets.only(
+                      top: 32.0,
+                      bottom: 32.0,
+                    ),
                     child: Image(
                       image: AssetImage('assets/images/logo.png'),
                     ),
@@ -37,64 +36,71 @@ class _State extends State<Homepage> {
                   Expanded(
                     child: FutureBuilder(
                       initialData: [],
-                      future: _dbHelper.getTask(),
+                      future: _dbHelper.getTasks(),
                       builder: (context, snapshot) {
                         return ScrollConfiguration(
-                          behavior: NoGlow(),
+                          behavior: NoGlowBehaviour(),
                           child: ListView.builder(
+                            itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => TaskPage(
-                                                task: snapshot.data[index],
-                                              )));
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Taskpage(
+                                        task: snapshot.data[index],
+                                      ),
+                                    ),
+                                  ).then(
+                                    (value) {
+                                      setState(() {});
+                                    },
+                                  );
                                 },
-                                child: TaskCard(
+                                child: TaskCardWidget(
                                   title: snapshot.data[index].title,
-                                  description: snapshot.data[index].description,
+                                  desc: snapshot.data[index].description,
                                 ),
                               );
                             },
-                            itemCount: snapshot.data.length,
                           ),
                         );
                       },
                     ),
-                  ),
+                  )
                 ],
               ),
               Positioned(
-                bottom: 24,
-                right: 0,
+                bottom: 24.0,
+                right: 0.0,
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) =>
-                          TaskPage(task: null)),
-
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              Taskpage(
+                                task: null,
+                              )),
                     ).then((value) {
                       setState(() {});
                     });
                   },
                   child: Container(
-                    height: 50,
-                    width: 50,
-                    child: Image(
-                      image: AssetImage('assets/images/add_icon.png'),
-                    ),
+                    width: 60.0,
+                    height: 60.0,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF7349FE),
-                          Color(0xFF643FDB),
-                        ],
-                        begin: Alignment(0,-1),
-                        end: Alignment(0,1),
+                          colors: [Color(0xFF7349FE), Color(0xFF643FDB)],
+                          begin: Alignment(0.0, -1.0),
+                          end: Alignment(0.0, 1.0)),
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    child: Image(
+                      image: AssetImage(
+                        "assets/images/add_icon.png",
                       ),
-                      borderRadius: BorderRadius.circular(25),
                     ),
                   ),
                 ),

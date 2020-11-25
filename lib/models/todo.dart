@@ -1,10 +1,10 @@
-class ToDo {
+class Todo {
   final int id;
+  final int taskId;
   final String title;
   final int isDone;
-  final int taskId;
 
-  ToDo({this.id, this.title, this.isDone, this.taskId});
+  Todo({this.id, this.taskId, this.title, this.isDone});
 
   Map<String, dynamic> toMap() {
     return {
